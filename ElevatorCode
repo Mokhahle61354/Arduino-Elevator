@@ -1,0 +1,197 @@
+int iLDRval =500;
+int iSpeed = 50;
+
+//Stepper
+#include <Stepper.h>
+ 
+int in1Pin = 12;
+int in2Pin = 11;
+int in3Pin = 10;
+int in4Pin = 9;
+ 
+// change this to the number of steps on your motor
+#define STEPS 512
+ 
+Stepper motor(STEPS, in1Pin, in2Pin, in3Pin, in4Pin); 
+//Stepper end
+
+//Led floor
+int Led1 = 5;
+int Led2 = 6;
+int Led3 = 7;
+//end Led floor
+
+//seven sgement
+int a = 24;
+int b = 26;
+int c = 28;
+int d = 30;
+int e = 32;
+int f = 34;
+int g = 36;
+char chDISPfloor = 'K';
+//end of seven sgement
+
+//doors
+//Door A
+int DoorAPin1 = 38; 
+int DoorAPin2 = 40; 
+int DoorAPin3 = 42; 
+int DoorAPin4 = 44;
+
+//Door B
+int DoorBPin1 = 46;
+int DoorBPin2 = 48;
+int DoorBPin3 = 50;
+int DoorBPin4 = 52;
+
+//Door C
+int DoorCPin1 = 47;
+int DoorCPin2 = 49;
+int DoorCPin3 = 51;
+int DoorCPin4 = 53;
+//doors end
+
+int inFloorA = 2; 
+int inFloorB = 3; 
+int inFloorC = 4;
+
+//int inFloorA = 5; 
+//int inFloorB = 6; 
+//int inFloorC = 7;
+//
+//
+//int inCmdFloorA = 2; 
+//int inCmdFloorB = 3; 
+//int inCmdFloorC = 4;
+
+char chCall = ' ';
+
+char chFloor = 'A';
+
+bool isOnce = false;
+
+int LDRpin1 = A0;
+int LDRpin2 = A1;
+int LDRpin3 = A2;
+
+int LDR1 = 0;
+int LDR2 = 0;
+int LDR3 = 0;
+
+//buttons
+ int iFloorA =0;
+ int iFloorB =0;
+ int iFloorC =0;
+ int iCmdFloorA =0;
+ int iCmdFloorB =0;
+ int iCmdFloorC =0;
+//end buttons
+
+void setup() 
+{
+  pinMode(Led1,OUTPUT);
+  pinMode(Led2,OUTPUT);
+  pinMode(Led3,OUTPUT);
+  
+  pinMode(LDRpin1, INPUT);
+  pinMode(LDRpin2, INPUT);
+  pinMode(LDRpin3, INPUT);
+
+  pinMode(inFloorA, INPUT);
+  pinMode(inFloorB, INPUT);
+  pinMode(inFloorC, INPUT);
+
+//  pinMode(inCmdFloorA, INPUT);
+//  pinMode(inCmdFloorB, INPUT);
+//  pinMode(inCmdFloorC, INPUT);
+
+  pinMode(in1Pin,OUTPUT);
+  pinMode(in2Pin,OUTPUT);
+  pinMode(in3Pin,OUTPUT);
+  pinMode(in4Pin,OUTPUT);
+
+  //sevensegment
+  pinMode(a, OUTPUT);
+  pinMode(b, OUTPUT);
+  pinMode(c, OUTPUT);
+  pinMode(d, OUTPUT);
+  pinMode(e, OUTPUT);
+  pinMode(f, OUTPUT);
+  pinMode(g, OUTPUT);
+  //end of seven sgement
+  Serial.begin(9600);
+  motor.setSpeed(iSpeed);    
+}
+
+void loop() 
+{
+  SevenSegement(chDISPfloor);
+  if(isOnce==false)
+  {
+    isOnce = true;
+    Loading();
+    Serial.println("Done loading\n");
+  }
+  SevenSegement(chDISPfloor);  
+
+  while(chCall==' ')
+  {
+      iFloorA = digitalRead(inFloorA);
+      iFloorB = digitalRead(inFloorB);
+      iFloorC = digitalRead(inFloorC);
+      if(iFloorA==HIGH)
+      {
+        chCall = 'A';
+        digitalWrite(Led1, HIGH);
+        digitalWrite(Led2, LOW);
+        digitalWrite(Led3, LOW);
+      }
+       else if(iFloorB==HIGH)
+      {
+        chCall = 'B';
+        digitalWrite(Led2, HIGH);
+        digitalWrite(Led1, LOW);
+        digitalWrite(Led3, LOW);
+      }
+      else if(iFloorC==HIGH)
+      {
+        chCall = 'C';
+        digitalWrite(Led3, HIGH);
+        digitalWrite(Led1, LOW);
+        digitalWrite(Led2, LOW);
+      }
+  }
+  
+  while(chCall=='A'||chCall=='B'||chCall=='C')
+  {
+    SevenSegement(chDISPfloor);
+    MotorControl(chCall);
+    SevenSegement(chDISPfloor);
+    DoorControl(chDISPfloor);
+    chCall = ' ';
+  }
+  
+}
+
+//String Calls()
+//{
+//  String sReturn = "";
+//  if(iFloorA==HIGH||iCmdFloorA==HIGH)
+//  {
+//    sReturn += "A";
+//    digitalWrite(Led1, HIGH);
+//  }
+//  if(iFloorB==HIGH||iCmdFloorA==HIGH)
+//  {
+//    sReturn += "B";
+//    digitalWrite(Led2, HIGH);
+//  }
+//  if(iFloorC==HIGH||iCmdFloorA==HIGH)
+//  {
+//    sReturn += "C";
+//    digitalWrite(Led3, HIGH);
+//  }
+//  OffLed();
+//  return sReturn ;
+//}
