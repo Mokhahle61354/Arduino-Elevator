@@ -194,4 +194,280 @@ void loop()
 //  }
 //  OffLed();
 //  return sReturn ;
+//}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+void OffLed()
+{
+  digitalWrite(Led1, LOW);
+  digitalWrite(Led2, LOW);
+  digitalWrite(Led3, LOW);
+}
+
+//char Goto(String _Calls)
+//{
+//  char chReturn = 'k';
+//  if(_Calls.length()>0)
+//  {
+//    chReturn = _Calls.charAt(0);
+//    sCall.remove(0,1);
+//  }
+//  return chReturn;
 //}
+
+void Loading()
+{
+  int iSteps=20;
+  while(LDR('A')<500)
+  {
+      motor.step(-iSteps);
+  }
+    chFloor = 'A';
+}
+
+void MotorControl(char _chGoTo)
+{
+  int iSteps=20;
+  int iDirection = Movement(chFloor,_chGoTo);
+  if(_chGoTo=='A')
+  {
+    while(LDR(_chGoTo)<iLDRval)
+    {
+      iSteps = 20*iDirection;
+      motor.step(iSteps);
+    }
+    chFloor = 'A';
+  }
+  else if(_chGoTo=='B')
+  {
+    while(LDR(_chGoTo)<iLDRval)
+    {
+        iSteps = 20*iDirection;
+        motor.step(iSteps);
+    }
+    chFloor = 'B';
+  }
+  else if(_chGoTo=='C')
+  {
+    while(LDR(_chGoTo)<iLDRval)
+    { 
+      iSteps = 20*iDirection;
+      motor.step(iSteps);
+    }
+    chFloor = 'C';
+  }
+  OffLed();
+}
+
+int LDR(char ldr)
+{
+  int LDR_Val =0;
+  if(ldr=='A')
+  {
+    LDR_Val = analogRead(LDRpin1);
+    chDISPfloor = 'A';
+  }
+  else if(ldr=='B')
+  {
+    LDR_Val = analogRead(LDRpin2);
+    chDISPfloor = 'B';
+  }
+  else
+  {
+    LDR_Val = analogRead(LDRpin3);
+    chDISPfloor = 'C';
+  }
+  return LDR_Val;
+}
+
+int Movement(char _chFloor,char _cmd)
+{
+  int iMove =0;
+  if(_chFloor=='A')
+  {
+    if(_cmd=='A')
+    {
+      iMove = 0;
+    }
+    else if(_cmd=='B')
+    {
+      iMove = 1; //down is positive
+    }
+    else if(_cmd=='C')
+    {
+      iMove = 1;
+    }
+  }
+
+  if(_chFloor=='B')
+  {
+    if(_cmd=='A')
+    {
+      iMove =-1;
+    }
+    else if(_cmd=='B')
+    {
+      iMove = 0; //down is positive
+    }
+    else if(_cmd=='C')
+    {
+      iMove = 1;
+    }
+  }
+
+  if(_chFloor=='C')
+  {
+    if(_cmd=='A')
+    {
+      iMove =-1;
+    }
+    else if(_cmd=='B')
+    {
+      iMove = -1; //down is positive
+    }
+    else if(_cmd=='C')
+    {
+      iMove = 0;
+    }
+  }
+
+  return iMove;
+}
+
+void DoorControl(char chDoor)
+{
+  if(chDoor == 'A')
+  {
+    delay(2000);
+    Open(DoorAPin1,DoorAPin2,DoorAPin3,DoorAPin4);
+    delay(2000);
+    Close(DoorAPin1,DoorAPin2,DoorAPin3,DoorAPin4);
+    delay(2000);
+  }
+  else if(chDoor == 'B')
+  {
+    delay(2000);
+    Open(DoorBPin1,DoorBPin2,DoorBPin3,DoorBPin4);
+    delay(2000);
+    Close(DoorBPin1,DoorBPin2,DoorBPin3,DoorBPin4);
+    delay(2000); 
+  }
+  else if(chDoor == 'C')
+  {
+    delay(2000);
+    Open(DoorCPin1,DoorCPin2,DoorCPin3,DoorCPin4);
+    delay(2000);
+    Close(DoorCPin1,DoorCPin2,DoorCPin3,DoorCPin4);
+    delay(2000); 
+  }
+}
+
+void Close(int Pin1, int Pin2,int Pin3, int Pin4) 
+{ // each floor distance where it works to up
+  pinMode(Pin1, OUTPUT); 
+  pinMode(Pin2, OUTPUT); 
+  pinMode(Pin3, OUTPUT); 
+  pinMode(Pin4, OUTPUT); 
+  
+  for(int b=0; b<400; b++){
+  
+  digitalWrite(Pin1, LOW);
+  digitalWrite(Pin2, LOW);
+  digitalWrite(Pin3, LOW);
+  digitalWrite(Pin4, HIGH);
+  delay(3);
+  digitalWrite(Pin1, LOW);
+  digitalWrite(Pin2, LOW);
+  digitalWrite(Pin3, HIGH);
+  digitalWrite(Pin4, LOW);
+  delay(3);
+  digitalWrite(Pin1, LOW);
+  digitalWrite(Pin2, HIGH);
+  digitalWrite(Pin3, LOW);
+  digitalWrite(Pin4, LOW);
+  delay(3);
+  digitalWrite(Pin1, HIGH);
+  digitalWrite(Pin2, LOW);
+  digitalWrite(Pin3, LOW);
+  digitalWrite(Pin4, LOW);  
+  delay(3);
+  }
+
+}
+
+void Open(int Pin1, int Pin2,int Pin3, int Pin4)
+{ // each floor distance where it works to down
+  pinMode(Pin1, OUTPUT); 
+  pinMode(Pin2, OUTPUT); 
+  pinMode(Pin3, OUTPUT); 
+  pinMode(Pin4, OUTPUT); 
+
+ for(int a=0;a<400;a++){
+     
+ digitalWrite(Pin1, HIGH); 
+ digitalWrite(Pin2, LOW); 
+ digitalWrite(Pin3, LOW); 
+ digitalWrite(Pin4, LOW); 
+ delay(3);
+ digitalWrite(Pin1, LOW); 
+ digitalWrite(Pin2, HIGH); 
+ digitalWrite(Pin3, LOW); 
+ digitalWrite(Pin4, LOW); 
+ delay(3);
+ digitalWrite(Pin1, LOW); 
+ digitalWrite(Pin2, LOW); 
+ digitalWrite(Pin3, HIGH); 
+ digitalWrite(Pin4, LOW); 
+ delay(3);
+ digitalWrite(Pin1, LOW); 
+ digitalWrite(Pin2, LOW); 
+ digitalWrite(Pin3, LOW); 
+ digitalWrite(Pin4, HIGH); 
+ delay(3);
+ 
+ }
+}
+
+void SevenSegement(char chLedFloor)
+ {
+     if (chLedFloor=='A')//floor A
+     {
+        digitalWrite(a, HIGH);
+        digitalWrite(b, HIGH);
+        digitalWrite(c, HIGH);
+        digitalWrite(d, HIGH);
+        digitalWrite(e, LOW);
+        digitalWrite(f, LOW);
+        digitalWrite(g, HIGH);
+  }
+  else if (chLedFloor=='B') //floor B
+  {
+        digitalWrite(a, HIGH);
+        digitalWrite(b,HIGH);
+        digitalWrite(c, LOW);
+        digitalWrite(d, HIGH);
+        digitalWrite(e, HIGH);
+        digitalWrite(f, LOW);
+        digitalWrite(g, HIGH);
+  }
+  else if (chLedFloor=='C') //floor C
+  {
+        digitalWrite(a, HIGH);
+        digitalWrite(b, LOW);
+        digitalWrite(c, HIGH);
+        digitalWrite(d, LOW);
+        digitalWrite(e, LOW);
+        digitalWrite(f, LOW);
+        digitalWrite(g, LOW);
+  }
+  else
+  {
+    //Loading
+        digitalWrite(a, LOW);
+        digitalWrite(b, LOW);
+        digitalWrite(c, LOW);
+        digitalWrite(d, LOW);
+        digitalWrite(e, LOW);
+        digitalWrite(f, LOW);
+        digitalWrite(g, HIGH);
+  }
+ }
